@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Garage Slot Manager</title>
+</head>
+
+<body class="bg-gradient-to-br from-[#dbeafe] to-[#d1fae5] min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white/50 backdrop-blur-2xl border-r border-white/40 shadow-xl h-screen rounded-r-3xl p-6 flex flex-col">
+    <h1 class="text-2xl font-semibold text-gray-900 mb-10 tracking-wide">MechOps🏎️</h1>
+
+    <nav class="space-y-3 text-gray-800 font-medium">
+         <a href="AdminDashboard.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
+        <span class="w-3 h-3 bg-[#1E848A] rounded-full"></span>
+        Dashboard
+      </a>
+      <a href="UsersPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow">
+        <span class="w-3 h-3 bg-[#3B8FE3] rounded-full"></span>
+        Users
+      </a>
+      <a href="StaffPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow">
+        <span class="w-3 h-3 bg-[#7C52D9] rounded-full"></span>
+        Staff
+      </a>
+      <a href="BookingManagement.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow">
+        <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
+        Bookings
+      </a>
+      <a href="SlotOnGarage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow">
+        <span class="w-3 h-3 bg-[#E56F45] rounded-full"></span>
+        SlotOnGarage
+      </a>
+    </nav>
+  </aside>
+
+
+  <!-- Main Content -->
+  <main class="flex-1 p-10">
+
+    <h1 class="text-4xl font-bold text-gray-800 mb-10">Garage Slot Management</h1>
+
+    <!-- SLOT GRID -->
+    <div id="slotGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+
+
+    <!-- SLOT EDIT FORM -->
+    <div id="slotForm" class="hidden fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center">
+      <form class="bg-white rounded-3xl p-8 w-96 space-y-4 shadow-xl">
+
+        <h2 class="text-2xl font-semibold text-gray-800">Update Slot</h2>
+
+        <input type="hidden" id="slotId">
+
+        <input id="carModel" placeholder="Car Model"
+          class="p-3 w-full border rounded-xl bg-gray-100" />
+
+        <input id="complaint" placeholder="Complaint"
+          class="p-3 w-full border rounded-xl bg-gray-100" />
+
+        <input id="time" type="datetime-local"
+          class="p-3 w-full border rounded-xl bg-gray-100" />
+
+        <input id="staff" placeholder="Assign Staff"
+          class="p-3 w-full border rounded-xl bg-gray-100" />
+
+        <select id="status" class="p-3 w-full border rounded-xl bg-gray-100">
+          <option value="empty">Empty</option>
+          <option value="booked">Booked</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <div class="flex justify-between pt-4">
+          <button type="button" onclick="toggleForm()"
+            class="px-4 py-2 bg-gray-400 text-white rounded-xl">Cancel</button>
+
+          <button type="button" onclick="saveSlot()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-xl shadow">Save</button>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+
+<script>
+// ------------------------------------
+// SLOT DATA
+// ------------------------------------
+let slots = [
+  { id: 1, status: "empty" },
+  { id: 2, status: "empty" },
+  { id: 3, status: "empty" },
+  { id: 4, status: "empty" },
+  { id: 5, status: "empty" },
+  { id: 6, status: "empty" },
+  { id: 7, status: "empty" },
+  { id: 8, status: "empty" },
+];
+
+// LOAD SLOTS
+function loadSlots() {
+  const grid = document.getElementById("slotGrid");
+  grid.innerHTML = "";
+
+  slots.forEach((slot) => {
+    grid.innerHTML += `
+      <div class="p-6 bg-white rounded-3xl shadow-xl border border-gray-200 hover:scale-105 transition cursor-pointer"
+           onclick="editSlot(${slot.id})">
+
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Slot ${slot.id}</h2>
+
+        ${slot.status === "empty" ? `
+          <p class="text-gray-500">No car assigned</p>
+        ` : `
+          <p><strong>Car:</strong> ${slot.carModel}</p>
+          <p><strong>Complaint:</strong> ${slot.complaint}</p>
+          <p><strong>Staff:</strong> ${slot.staff}</p>
+          <p><strong>Time:</strong> ${slot.time}</p>
+        `}
+
+        <span class="mt-3 inline-block px-3 py-1 text-sm rounded-xl ${getStatusColor(slot.status)}">
+          ${slot.status}
+        </span>
+      </div>
+    `;
+  });
+}
+
+// STATUS COLORS
+function getStatusColor(status) {
+  switch (status) {
+    case "empty": return "bg-gray-300";
+    case "booked": return "bg-yellow-400";
+    case "in-progress": return "bg-blue-400";
+    case "completed": return "bg-green-500 text-white";
+  }
+}
+
+// EDIT SLOT
+function editSlot(id) {
+  const slot = slots.find(s => s.id === id);
+
+  document.getElementById("slotId").value = slot.id;
+  document.getElementById("carModel").value = slot.carModel || "";
+  document.getElementById("complaint").value = slot.complaint || "";
+  document.getElementById("time").value = slot.time || "";
+  document.getElementById("staff").value = slot.staff || "";
+  document.getElementById("status").value = slot.status;
+
+  toggleForm();
+}
+
+// SAVE SLOT
+function saveSlot() {
+  const id = parseInt(document.getElementById("slotId").value);
+  const slot = slots.find(s => s.id === id);
+
+  slot.carModel = document.getElementById("carModel").value;
+  slot.complaint = document.getElementById("complaint").value;
+  slot.time = document.getElementById("time").value;
+  slot.staff = document.getElementById("staff").value;
+  slot.status = document.getElementById("status").value;
+
+  toggleForm();
+  loadSlots();
+}
+
+// TOGGLE FORM
+function toggleForm() {
+  document.getElementById("slotForm").classList.toggle("hidden");
+}
+
+loadSlots();
+</script>
+
+</body>
+</html>
