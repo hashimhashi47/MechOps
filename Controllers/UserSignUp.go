@@ -62,3 +62,8 @@ func UserSignUp(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"Success": "SignUp Sucessfully"})
 }
+
+
+func UpadateUser(c *gin.Context){
+	
+}

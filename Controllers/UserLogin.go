@@ -5,7 +5,6 @@ import (
 	db "MECHOPS/Db"
 	models "MECHOPS/Models"
 	utils "MECHOPS/Utils"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +27,6 @@ func UserLogin(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User not found"})
 		return
 	}
-	fmt.Println(User)
 
 	if User.Block && User.Role == constants.User {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": "your account is blocked"})
@@ -53,6 +51,12 @@ func UserLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": "Unable to issue RefershToken"})
 		return
 	}
+
+	//pass access token through cookie
+	c.SetCookie("Token", AccessToken, 3600, "/", "localhost", true, true)
+	//pass access token to db
+	User.RefreshToken = RefershToken
+	db.DB.Save(&User)
 
 	c.JSON(http.StatusOK, gin.H{
 		"Sucess":  "User Logged In Sucessfully",
