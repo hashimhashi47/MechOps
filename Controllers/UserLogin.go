@@ -5,9 +5,8 @@ import (
 	db "MECHOPS/Db"
 	models "MECHOPS/Models"
 	utils "MECHOPS/Utils"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func UserLogin(c *gin.Context) {
@@ -64,4 +63,47 @@ func UserLogin(c *gin.Context) {
 		"Refersh": RefershToken,
 		"role":    User.Role,
 	})
+}
+
+// Update User
+func ProfileUpdate(c *gin.Context) {
+
+	var Input struct {
+		FirstName string `json:"firstname"`
+		Lastname  string `json:"lastname"`
+		Phone     string `json:"phone" binding:"min=10"`
+	}
+	Userid := c.MustGet("id")
+
+	if err := c.ShouldBindJSON(&Input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		return
+	}
+
+	//Get the data of that user
+	var User models.User
+	
+	if err := db.DB.Where("id = ?", Userid).First(&User).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "User not found"})
+		return
+	}
+
+	if Input.FirstName != "" {
+		User.FirstName = Input.FirstName
+	}
+
+	if Input.Lastname != "" {
+		User.Lastname = Input.Lastname
+	}
+
+	if Input.Phone != "" {
+		User.Phone = Input.Phone
+	}
+
+	if err := db.DB.Save(&User).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Unable to update profile"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Sucess": "Successfully upadated profile"})
 }

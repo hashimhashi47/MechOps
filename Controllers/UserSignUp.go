@@ -5,9 +5,9 @@ import (
 	db "MECHOPS/Db"
 	models "MECHOPS/Models"
 	utils "MECHOPS/Utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func UserSignUp(c *gin.Context) {
@@ -61,9 +61,4 @@ func UserSignUp(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Success": "SignUp Sucessfully"})
-}
-
-
-func UpadateUser(c *gin.Context){
-	
 }
