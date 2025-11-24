@@ -24,13 +24,18 @@ func Connection() {
     var er error
 
     DB, er = gorm.Open(mysql.Open(root), &gorm.Config{})
+    
     if er != nil {
         log.Fatal("Failed to connect Database", er)
     }
 
     err = DB.AutoMigrate(
         &models.User{},
+        &models.Booking{},
+
     )
+
+
     if err != nil {
         log.Fatal("Failed to AutoMigrate", err)
     }

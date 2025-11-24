@@ -58,7 +58,7 @@ func UserLogin(c *gin.Context) {
 	db.DB.Save(&User)
 
 	c.JSON(http.StatusOK, gin.H{
-		"Sucess":  "User Logged In Sucessfully",
+		"Sucess":  "Logged In Sucessfully",
 		"Access":  AccessToken,
 		"Refersh": RefershToken,
 		"role":    User.Role,
@@ -82,7 +82,7 @@ func ProfileUpdate(c *gin.Context) {
 
 	//Get the data of that user
 	var User models.User
-	
+
 	if err := db.DB.Where("id = ?", Userid).First(&User).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": "User not found"})
 		return

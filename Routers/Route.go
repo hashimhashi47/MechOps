@@ -4,6 +4,7 @@ import (
 	constants "MECHOPS/Constants"
 	controllers "MECHOPS/Controllers"
 	middleware "MECHOPS/Middleware"
+	services "MECHOPS/Services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,7 @@ func Routes(e *gin.Engine) {
 	{
 		User.GET("/DashBoard", controllers.Dashboard)
 		User.POST("/UpadteProfile", controllers.ProfileUpdate)
+		User.POST("/BookService", services.Booking)
 	}
 
 }
