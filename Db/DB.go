@@ -32,7 +32,7 @@ func Connection() {
     err = DB.AutoMigrate(
         &models.User{},
         &models.Booking{},
-
+        &models.Admin{},
     )
 
 

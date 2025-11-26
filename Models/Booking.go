@@ -6,29 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// user
-type User struct {
-	gorm.Model
-	FirstName    string    `json:"firstname"`
-	Lastname     string    `json:"lastname"`
-	Email        string    `json:"email" gorm:"unique"`
-	Role         string    `json:"role"`
-	Phone        string    `json:"phone"`
-	Bookings     []Booking `gorm:"foreignKey:UserID"`
-	Booked       []Booked  `gorm:"foreignKey:UserID"`
-	Block        bool      `gorm:"default:false"`
-	Password     string    `json:"password" gorm:"type:varchar(255)"`
-	RefreshToken string    `json:"-" gorm:"type:text"`
-}
-
 // RegisterBooking
 type Booking struct {
 	gorm.Model
 	ID        string `json:"id" gorm:"primaryKey"`
-	CarModel  string `json:"carmodel"`
+	CarModel  string `json:"car"`
 	CarNumber string `json:"carnumber"`
 	FuelType  string `json:"fueltype"`
-	Problem   string `json:"problem"`
+	Problem   string `json:"service"`
 	Time      string `json:"time"`
 	Date      string `json:"date"`
 	Address   string `json:"Address"`

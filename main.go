@@ -10,9 +10,8 @@ func main() {
 
 	db.Connection()
 	G := gin.Default()
+	G.LoadHTMLGlob("Templates/*.html")
 	routers.Routes(G)
 	G.Run(":8080")
-
-	
 
 }

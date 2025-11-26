@@ -50,6 +50,16 @@
         <h2 class="text-4xl font-bold text-gray-900 tracking-tight">Dashboard</h2>
         <p class="text-gray-600 mt-1 text-lg">Welcome back, Admin 👋</p>
       </div>
+      <div class="flex justify-end mb-4">
+  <form method="GET" action="/Api/Admin/Logout">
+    <button
+      type="submit"
+      class="px-5 py-2 bg-red-600 text-white font-semibold rounded-xl shadow hover:bg-red-500 transition"
+    >
+      Logout 🔒
+    </button>
+  </form>
+</div>
     </div>
 
     <!-- API Loaded Cards -->
@@ -108,11 +118,11 @@
       try {
 
         // Change these URLs to your Go backend endpoints
-        const usersRes = await fetch("/api/users/count");
-        const bookingsRes = await fetch("/api/bookings/count");
-        const nextServiceRes = await fetch("/api/bookings/next");
-        const recentRes = await fetch("/api/bookings/recent");
-        const staffRes = await fetch("/api/staff/count");
+        const usersRes = await fetch("/Admin/users/count");
+        const bookingsRes = await fetch("/Admin/bookings/count");
+        const nextServiceRes = await fetch("/Admin/bookings/next");
+        const recentRes = await fetch("/Admin/bookings/recent");
+        const staffRes = await fetch("/Admin/staff/count");
 
         const users = await usersRes.json();
         const bookings = await bookingsRes.json();
@@ -140,7 +150,7 @@
             container.innerHTML += `
               <div class="flex justify-between items-center p-4 bg-white rounded-xl shadow border border-white/40">
                 <p class="font-medium text-gray-800">${b.car} - ${b.service}</p>
-                <span class="text-sm font-medium ${getBookingColor(b.status)}">${b.status}</span>
+                <span class="text-sm font-medium">${b.time}</span>
               </div>
             `;
           });
@@ -150,16 +160,6 @@
         console.error("Error loading dashboard:", err);
       }
     }
-
-    function getBookingColor(status) {
-      switch (status) {
-        case "Completed": return "text-green-700";
-        case "Pending": return "text-yellow-600";
-        case "Ongoing": return "text-blue-600";
-        default: return "text-gray-600";
-      }
-    }
-
     loadDashboard();
   </script>
 
