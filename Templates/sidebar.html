@@ -1,0 +1,46 @@
+{{ define "sidebar" }}
+<aside
+    class="w-64 bg-white/50 backdrop-blur-2xl border-r border-white/40 shadow-xl h-screen rounded-r-3xl p-6 flex flex-col">
+    <h1 class="text-2xl font-semibold text-gray-900 mb-10 tracking-wide">MechOps🏎️</h1>
+
+    <nav class="space-y-3 text-gray-800 font-medium">
+
+        <form method="GET" action="/Admin/Dashboard">
+            <button
+                class="w-full flex items-center gap-3 p-3 rounded-xl bg-white shadow border border-white/40 text-left">
+                <span class="w-3 h-3 bg-[#1E848A] rounded-full"></span>
+                Dashboard
+            </button>
+        </form>
+
+        <form method="GET" action="/Admin/Users">
+            <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow text-left">
+                <span class="w-3 h-3 bg-[#3B8FE3] rounded-full"></span>
+                Users
+            </button>
+        </form>
+
+        <form method="GET" action="/Admin/Staff">
+            <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow text-left">
+                <span class="w-3 h-3 bg-[#7C52D9] rounded-full"></span>
+                Staff
+            </button>
+        </form>
+
+        <form method="GET" action="/Admin/Bookings">
+            <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow text-left">
+                <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
+                Bookings
+            </button>
+        </form>
+
+        <form method="GET" action="/Admin/Slots">
+            <button class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow text-left">
+                <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
+                Garage Slots
+            </button>
+        </form>
+
+    </nav>
+</aside>
+{{ end }}

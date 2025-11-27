@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,32 +11,9 @@
 <body class="bg-gradient-to-br from-[#C9DDE4] to-[#D9D5F0] min-h-screen flex overflow-hidden">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-white/50 backdrop-blur-2xl border-r border-white/40 shadow-xl h-screen rounded-r-3xl p-6 flex flex-col">
-    <h1 class="text-2xl font-semibold text-gray-900 mb-10 tracking-wide">MechOps🏎️</h1>
 
-    <nav class="space-y-3 text-gray-800 font-medium">
-          <a href="AdminDashboard.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#1E848A] rounded-full"></span>
-        Dashboard
-      </a>
-      <a href="UsersPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#3B8FE3] rounded-full"></span>
-        Users
-      </a>
-      <a href="StaffPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#7C52D9] rounded-full"></span>
-        Staff
-      </a>
-      <a href="BookingManagement.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
-        Bookings
-      </a>
-       <a href="SlotOnGarage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
-        SlotOnGarage
-      </a>
-    </nav>
-  </aside>
+  {{ template "sidebar" }}
+
   <!-- Main Content -->
   <main class="flex-1 p-10 overflow-y-auto">
 
@@ -59,7 +37,8 @@
     </div>
 
     <!-- User Form (Glass UI) -->
-    <form id="userForm" class="hidden p-6 mb-8 bg-white/60 backdrop-blur-xl border border-white/40 shadow-md rounded-3xl space-y-4">
+    <form id="userForm"
+      class="hidden p-6 mb-8 bg-white/60 backdrop-blur-xl border border-white/40 shadow-md rounded-3xl space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input class="p-3 border rounded-xl bg-white/70" placeholder="Name" id="name" required />
         <input class="p-3 border rounded-xl bg-white/70" placeholder="Email" id="email" required />
@@ -90,20 +69,20 @@
 
   <script>
 
- const API = "http://localhost:8080";
+    const API = "http://localhost:8080";
 
-// ===============================
-// 🔥 LOAD USERS
-// ===============================
-async function loadUsers() {
-  const res = await fetch(`${API}/admin/users`);
-  const data = await res.json();
+    // ===============================
+    // 🔥 LOAD USERS
+    // ===============================
+    async function loadUsers() {
+      const res = await fetch(`${API}/admin/users`);
+      const data = await res.json();
 
-  const table = document.getElementById("usersTable");
-  table.innerHTML = "";
+      const table = document.getElementById("usersTable");
+      table.innerHTML = "";
 
-  data.Users.forEach((u) => {
-    table.innerHTML += `
+      data.Users.forEach((u) => {
+        table.innerHTML += `
       <tr class="border-b border-gray-300/30 hover:bg-white/60 transition">
         <td class="p-4 text-gray-800">${u.name}</td>
         <td class="p-4 text-gray-800">${u.email}</td>
@@ -124,91 +103,92 @@ async function loadUsers() {
         </td>
       </tr>
     `;
-  });
-}
+      });
+    }
 
 
-// ===============================
-// 🔥 CREATE / UPDATE USER
-// ===============================
-document.getElementById("userForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+    // ===============================
+    // 🔥 CREATE / UPDATE USER
+    // ===============================
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  const id = document.getElementById("userId").value;
+      const id = document.getElementById("userId").value;
 
-  const payload = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    password: document.getElementById("password").value
-  };
+      const payload = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        password: document.getElementById("password").value
+      };
 
-  if (id) {
-    // UPDATE USER
-    await fetch(`${API}/admin/user/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      if (id) {
+        // UPDATE USER
+        await fetch(`${API}/admin/user/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        // CREATE USER
+        await fetch(`${API}/admin/user`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      toggleUserForm();
+      loadUsers();
     });
-  } else {
-    // CREATE USER
-    await fetch(`${API}/admin/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  }
-
-  toggleUserForm();
-  loadUsers();
-});
 
 
-// ===============================
-// 🔥 EDIT (prefill form)
-// ===============================
+    // ===============================
+    // 🔥 EDIT (prefill form)
+    // ===============================
 
-function editUser(id, nameVal, emailVal, phoneVal) {
-  toggleUserForm();
+    function editUser(id, nameVal, emailVal, phoneVal) {
+      toggleUserForm();
 
-  document.getElementById("userId").value = id;
-  document.getElementById("name").value = nameVal;
-  document.getElementById("email").value = emailVal;
-  document.getElementById("phone").value = phoneVal;
-}
-
-
-// ===============================
-// 🔥 DELETE USER
-// ===============================
-async function deleteUser(id) {
-  await fetch(`${API}/admin/user/${id}`, {
-    method: "DELETE"
-  });
-
-  loadUsers();
-}
+      document.getElementById("userId").value = id;
+      document.getElementById("name").value = nameVal;
+      document.getElementById("email").value = emailVal;
+      document.getElementById("phone").value = phoneVal;
+    }
 
 
-// ===============================
-// 🔥 TOGGLE FORM + RESET
-// ===============================
-function toggleUserForm() {
-  document.getElementById("userForm").classList.toggle("hidden");
-  resetUserForm();
-}
+    // ===============================
+    // 🔥 DELETE USER
+    // ===============================
+    async function deleteUser(id) {
+      await fetch(`${API}/admin/user/${id}`, {
+        method: "DELETE"
+      });
 
-function resetUserForm() {
-  document.getElementById("userForm").reset();
-  document.getElementById("userId").value = "";
-}
+      loadUsers();
+    }
 
 
-// ===============================
-// 🔥 ON LOAD
-// ===============================
-loadUsers();
+    // ===============================
+    // 🔥 TOGGLE FORM + RESET
+    // ===============================
+    function toggleUserForm() {
+      document.getElementById("userForm").classList.toggle("hidden");
+      resetUserForm();
+    }
+
+    function resetUserForm() {
+      document.getElementById("userForm").reset();
+      document.getElementById("userId").value = "";
+    }
+
+
+    // ===============================
+    // 🔥 ON LOAD
+    // ===============================
+    loadUsers();
   </script>
 
 </body>
+
 </html>

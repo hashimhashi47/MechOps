@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,34 +10,8 @@
 
 <body class="bg-gradient-to-br from-[#d7e6e7] to-[#e8e4f2] min-h-screen flex overflow-hidden">
 
-<!-- Sidebar -->
-  <aside class="w-64 bg-white/50 backdrop-blur-2xl border-r border-white/40 shadow-xl h-screen rounded-r-3xl p-6 flex flex-col">
-    <h1 class="text-2xl font-semibold text-gray-900 mb-10 tracking-wide">MechOps🏎️</h1>
-
-    <nav class="space-y-3 text-gray-800 font-medium">
-      <a href="AdminDashboard.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#1E848A] rounded-full"></span>
-        Dashboard
-      </a>
-      <a href="UsersPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#3B8FE3] rounded-full"></span>
-        Users
-      </a>
-      <a href="StaffPage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#7C52D9] rounded-full"></span>
-        Staff
-      </a>
-      <a href="BookingManagement.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
-        Bookings
-      </a>
-       <a href="SlotOnGarage.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow border border-transparent hover:border-white/40">
-        <span class="w-3 h-3 bg-[#E8B645] rounded-full"></span>
-        SlotOnGarage
-      </a>
-    </nav>
-  </aside>
-
+  <!-- Sidebar -->
+  {{ template "sidebar" }}
   <!-- Main -->
   <main class="flex-1 p-10 overflow-y-auto">
 
@@ -51,7 +26,8 @@
     <!-- Add Staff Button -->
     <div class="flex justify-between mb-6">
       <h3 class="text-2xl font-semibold text-gray-800">Staff Members</h3>
-      <button onclick="toggleStaffForm()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-xl shadow">
+      <button onclick="toggleStaffForm()"
+        class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-xl shadow">
         + Add Staff
       </button>
     </div>
@@ -68,7 +44,8 @@
         <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl shadow" type="submit">
           Save
         </button>
-        <button type="button" onclick="toggleStaffForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-xl shadow">
+        <button type="button" onclick="toggleStaffForm()"
+          class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-xl shadow">
           Cancel
         </button>
       </div>
@@ -96,30 +73,30 @@
   </main>
 
   <script>
-const API = "http://localhost:8080";
+    const API = "http://localhost:8080";
 
 
-const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-// ===============================
-// 🔥 LOAD STAFF
-// ===============================
-async function loadStaff() {
-  try {
-    const res = await fetch(`${API}/admin/staffs`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    // ===============================
+    // 🔥 LOAD STAFF
+    // ===============================
+    async function loadStaff() {
+      try {
+        const res = await fetch(`${API}/admin/staffs`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    const tbody = document.getElementById("staffTable");
-    tbody.innerHTML = "";
+        const tbody = document.getElementById("staffTable");
+        tbody.innerHTML = "";
 
-    data.Staffs.forEach((s) => {
-      const tr = document.createElement("tr");
-      tr.className = "border-b border-gray-300/30 hover:bg-white/60 transition";
+        data.Staffs.forEach((s) => {
+          const tr = document.createElement("tr");
+          tr.className = "border-b border-gray-300/30 hover:bg-white/60 transition";
 
-      tr.innerHTML = `
+          tr.innerHTML = `
         <td class='p-4 text-gray-800'>${s.name}</td>
         <td class='p-4 text-gray-800'>${s.email}</td>
         <td class='p-4 text-gray-800'>${s.role}</td>
@@ -139,107 +116,108 @@ async function loadStaff() {
         </td>
       `;
 
-      tbody.appendChild(tr);
-    });
-  } catch (error) {
-    console.log("Error loading staff:", error);
-  }
-}
-
-
-// ===============================
-// 🔥 CREATE / UPDATE STAFF
-// ===============================
-document.getElementById("staffForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const id = document.getElementById("staffId").value;
-
-  const payload = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    role: document.getElementById("role").value,
-  };
-
-  try {
-    if (id) {
-      // UPDATE STAFF
-      await fetch(`${API}/admin/staff/${id}`, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      // CREATE STAFF
-      await fetch(`${API}/admin/staff`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload),
-      });
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.log("Error loading staff:", error);
+      }
     }
 
-    toggleStaffForm();
-    loadStaff();
-  } catch (error) {
-    console.log("Error saving staff:", error);
-  }
-});
 
+    // ===============================
+    // 🔥 CREATE / UPDATE STAFF
+    // ===============================
+    document.getElementById("staffForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-// ===============================
-// 🔥 EDIT STAFF
-// ===============================
-function editStaff(id, name, email, role) {
-  toggleStaffForm();
+      const id = document.getElementById("staffId").value;
 
-  document.getElementById("staffId").value = id;
-  document.getElementById("name").value = name;
-  document.getElementById("email").value = email;
-  document.getElementById("role").value = role;
-}
+      const payload = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        role: document.getElementById("role").value,
+      };
 
+      try {
+        if (id) {
+          // UPDATE STAFF
+          await fetch(`${API}/admin/staff/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          // CREATE STAFF
+          await fetch(`${API}/admin/staff`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload),
+          });
+        }
 
-// ===============================
-// 🔥 DELETE STAFF
-// ===============================
-async function deleteStaff(id) {
-  try {
-    await fetch(`${API}/admin/staff/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+        toggleStaffForm();
+        loadStaff();
+      } catch (error) {
+        console.log("Error saving staff:", error);
+      }
     });
 
+
+    // ===============================
+    // 🔥 EDIT STAFF
+    // ===============================
+    function editStaff(id, name, email, role) {
+      toggleStaffForm();
+
+      document.getElementById("staffId").value = id;
+      document.getElementById("name").value = name;
+      document.getElementById("email").value = email;
+      document.getElementById("role").value = role;
+    }
+
+
+    // ===============================
+    // 🔥 DELETE STAFF
+    // ===============================
+    async function deleteStaff(id) {
+      try {
+        await fetch(`${API}/admin/staff/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        loadStaff();
+      } catch (error) {
+        console.log("Error deleting staff:", error);
+      }
+    }
+
+
+    // ===============================
+    // 🔥 TOGGLE + RESET FORM
+    // ===============================
+    function toggleStaffForm() {
+      document.getElementById("staffForm").classList.toggle("hidden");
+      resetStaffForm();
+    }
+
+    function resetStaffForm() {
+      document.getElementById("staffForm").reset();
+      document.getElementById("staffId").value = "";
+    }
+
+
+    // ===============================
+    // 🔥 INITIAL LOAD
+    // ===============================
     loadStaff();
-  } catch (error) {
-    console.log("Error deleting staff:", error);
-  }
-}
-
-
-// ===============================
-// 🔥 TOGGLE + RESET FORM
-// ===============================
-function toggleStaffForm() {
-  document.getElementById("staffForm").classList.toggle("hidden");
-  resetStaffForm();
-}
-
-function resetStaffForm() {
-  document.getElementById("staffForm").reset();
-  document.getElementById("staffId").value = "";
-}
-
-
-// ===============================
-// 🔥 INITIAL LOAD
-// ===============================
-loadStaff();
   </script>
 </body>
+
 </html>

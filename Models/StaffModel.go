@@ -16,9 +16,9 @@ type Staff struct {
 
 type Address struct {
 	gorm.Model
-	StaffID  uint   `json:"userid"`
-	Address  string `json:"address"`
-	Street   string `json:"street"`
-	City     string `json:"city"`
-	State    string `json:"state"`
+	StaffID uint   `json:"userid"`
+	Address string `json:"address"`
+	Street  string `json:"street"`
+	City    string `json:"city"`
+	State   string `json:"state"`
 }

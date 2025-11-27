@@ -38,7 +38,6 @@ func GetNextService(c *gin.Context) {
     c.JSON(http.StatusOK, booking)
 }
 
-// RECENT BOOKINGS
 func GetRecentBookings(c *gin.Context) {
     var bookings []models.Booking
     db.DB.Order("created_at desc").Limit(5).Find(&bookings)
