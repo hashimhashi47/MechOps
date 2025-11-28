@@ -8,7 +8,6 @@ import (
 
 // RegisterBooking
 type Booking struct {
-	gorm.Model
 	ID        string `json:"id" gorm:"primaryKey"`
 	CarModel  string `json:"car"`
 	CarNumber string `json:"carnumber"`
@@ -17,12 +16,12 @@ type Booking struct {
 	Time      string `json:"time"`
 	Date      string `json:"date"`
 	Address   string `json:"Address"`
-	LandMark  string `json:"landmark"`
+	LandMark  string `json:"landmark" `
+	Status    string `json:"status"`
 	UserID    uint
 }
 
-
-//After user confirm service
+// After user confirm service
 type Booked struct {
 	gorm.Model
 

@@ -12,8 +12,8 @@
 
   <!-- Sidebar -->
 
-    {{ template "sidebar" }}
- 
+  {{ template "sidebar" }}
+
 
   <!-- Main -->
   <main class="flex-1 p-10 overflow-y-auto">
@@ -101,9 +101,10 @@
           await fetch(`/Admin/AllBooking/update/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ status }) 
           });
-          loadBookings();
+
+          loadBookings(); 
         } catch (err) {
           console.error("Error updating status:", err);
         }

@@ -34,7 +34,6 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-
 	c.SetCookie("admin_id", admin.Name, 3600, "/", "localhost", false, true)
 	c.Redirect(http.StatusSeeOther, "/Admin/Dashboard")
 }

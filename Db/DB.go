@@ -35,7 +35,6 @@ func Connection() {
         &models.Admin{},
     )
 
-
     if err != nil {
         log.Fatal("Failed to AutoMigrate", err)
     }

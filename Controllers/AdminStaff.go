@@ -9,3 +9,7 @@ import (
 func ManageStaff(c *gin.Context) {
 	c.HTML(http.StatusOK, "StaffPage.html", nil)
 }
+
+func AddStaff(c *gin.Context){
+	
+}

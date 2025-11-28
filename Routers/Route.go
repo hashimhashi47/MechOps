@@ -22,7 +22,6 @@ func Routes(e *gin.Engine) {
 		Api.GET("/Logout", middleware.Middleware(constants.Admin, constants.Staff, constants.User), controllers.UserLogout)
 	}
 
-
 	//user Routes
 	User := e.Group("/User")
 
@@ -32,8 +31,6 @@ func Routes(e *gin.Engine) {
 		User.POST("/UpadteProfile", controllers.ProfileUpdate)
 		User.POST("/BookService", services.Booking)
 	}
-
-
 
 	//Staff
 	Staff := e.Group("/Staff")
@@ -49,26 +46,37 @@ func Routes(e *gin.Engine) {
 		Admin.POST("/login", controllers.AdminLogin)
 		Admin.GET("/login", controllers.AdminLogin)
 
+		//Dashboard routes and endpoints
 		Admin.GET("/Dashboard", middleware.AdminAuth(), controllers.AdminDashboardPage)
-
 		Admin.GET("/users/count", controllers.GetUsersCount)
 		Admin.GET("/staff/count", controllers.GetStaffCount)
 		Admin.GET("/bookings/count", controllers.GetBookingCount)
 		Admin.GET("/bookings/next", controllers.GetNextService)
 		Admin.GET("/bookings/recent", controllers.GetRecentBookings)
 
+		//User routes and endpoints
 		Admin.GET("/Users", controllers.ManageUsers)
+		Admin.GET("/GetAllusers", controllers.GetAllUsers)
+		Admin.PUT("/UpdateUsers/:id", controllers.UpdateUser)
+		Admin.POST("/AddUser", controllers.UserSignUp)
+		Admin.DELETE("/Delete/:id", controllers.DeleteUser)
+		Admin.PUT("User/Block/:id", controllers.Blockuser)
 
+		//Staff routes and endPoints
 		Admin.GET("/Staff", controllers.ManageStaff)
 
+		//bookings Management and endpoints
 		Admin.GET("/Bookings", controllers.ManageBookings)
-		Admin.GET("/AllBooking",controllers.GetBookings)
+		Admin.GET("/AllBooking", controllers.GetBookings)
+		Admin.PUT("/AllBooking/update/:id", controllers.UpdateBooking)
 
+		//slot management and end points
 		Admin.GET("/Slots", controllers.ManageSlots)
+
 	}
 
-	 // Load all HTML templates
-    tmpl := template.Must(template.ParseGlob("Templates/*.html"))
-    e.SetHTMLTemplate(tmpl)
+	// Load all HTML templates
+	tmpl := template.Must(template.ParseGlob("Templates/*.html"))
+	e.SetHTMLTemplate(tmpl)
 
 }

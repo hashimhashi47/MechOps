@@ -12,7 +12,7 @@ type User struct {
 	Phone        string    `json:"phone"`
 	Bookings     []Booking `gorm:"foreignKey:UserID"`
 	Booked       []Booked  `gorm:"foreignKey:UserID"`
-	Block        bool      `gorm:"default:false"`
+	Block        bool      `json:"block" gorm:"default:false"`
 	Password     string    `json:"password" gorm:"type:varchar(255)"`
 	RefreshToken string    `json:"-" gorm:"type:text"`
 }

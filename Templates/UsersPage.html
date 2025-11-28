@@ -10,11 +10,10 @@
 
 <body class="bg-gradient-to-br from-[#C9DDE4] to-[#D9D5F0] min-h-screen flex overflow-hidden">
 
-  <!-- Sidebar -->
-
+  <!-- SIDEBAR -->
   {{ template "sidebar" }}
 
-  <!-- Main Content -->
+  <!-- MAIN CONTENT -->
   <main class="flex-1 p-10 overflow-y-auto">
 
     <!-- Header -->
@@ -23,12 +22,9 @@
         <h2 class="text-4xl font-bold text-gray-900 tracking-tight">User Management</h2>
         <p class="text-gray-600 mt-1 text-lg">Manage all registered users ⚙️</p>
       </div>
-
-      <div class="flex items-center gap-5">
-      </div>
     </div>
 
-    <!-- Add User Button -->
+    <!-- Top Row -->
     <div class="flex justify-between mb-6">
       <h2 class="text-xl font-semibold text-gray-900">Users</h2>
       <button onclick="toggleUserForm()" class="px-4 py-2 bg-gray-900 text-white rounded-xl shadow-lg">
@@ -36,21 +32,22 @@
       </button>
     </div>
 
-    <!-- User Form (Glass UI) -->
+    <!-- User Form -->
     <form id="userForm"
       class="hidden p-6 mb-8 bg-white/60 backdrop-blur-xl border border-white/40 shadow-md rounded-3xl space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input class="p-3 border rounded-xl bg-white/70" placeholder="Name" id="name" required />
+        <input class="p-3 border rounded-xl bg-white/70" placeholder="First Name" id="firstname" required />
+        <input class="p-3 border rounded-xl bg-white/70" placeholder="Last Name" id="lastname" required />
         <input class="p-3 border rounded-xl bg-white/70" placeholder="Email" id="email" required />
         <input class="p-3 border rounded-xl bg-white/70" placeholder="Phone" id="phone" required />
-        <input class="p-3 border rounded-xl bg-white/70" placeholder="Password" id="password" />
+        <input class="p-3 border rounded-xl bg-white/70" placeholder="Password" type="password" id="password" />
       </div>
 
       <button class="px-6 py-3 bg-[#3B8FE3] text-white rounded-xl shadow-md" type="submit">Save</button>
       <input type="hidden" id="userId" />
     </form>
 
-    <!-- USERS TABLE -->
+    <!-- Users Table -->
     <section class="bg-white/60 backdrop-blur-xl border border-white/40 shadow-md rounded-3xl p-6">
       <table class="w-full text-left">
         <thead class="bg-white/60 rounded-xl">
@@ -68,113 +65,196 @@
   </main>
 
   <script>
-
-    const API = "http://localhost:8080";
-
-    // ===============================
-    // 🔥 LOAD USERS
-    // ===============================
+    // =============================
+    // 🚗 LOAD USERS LIST
+    // =============================
     async function loadUsers() {
-      const res = await fetch(`${API}/admin/users`);
+      const res = await fetch(`/Admin/GetAllusers`);
       const data = await res.json();
-
+      console.log("Updated users:", data.Users);
       const table = document.getElementById("usersTable");
       table.innerHTML = "";
 
       data.Users.forEach((u) => {
-        table.innerHTML += `
-      <tr class="border-b border-gray-300/30 hover:bg-white/60 transition">
-        <td class="p-4 text-gray-800">${u.name}</td>
-        <td class="p-4 text-gray-800">${u.email}</td>
-        <td class="p-4 text-gray-800">${u.phone}</td>
+        const row = document.createElement('tr');
+        row.className = 'border-b border-gray-300/30 hover:bg-white/60 transition';
 
-        <td class="p-4 flex gap-2">
-          <button 
-            onclick="editUser('${u.id}', '${u.name}', '${u.email}', '${u.phone}')"
-            class="bg-yellow-500 text-white px-4 py-2 rounded-xl shadow hover:bg-yellow-600">
-            Edit
-          </button>
+        row.innerHTML = `
+          <td class="p-4 text-gray-800">${u.firstname} ${u.lastname}</td>
+          <td class="p-4 text-gray-800">${u.email}</td>
+          <td class="p-4 text-gray-800">${u.phone}</td>
+          <td class="p-4 flex gap-2">
+            <button 
+              class="bg-yellow-500 text-white px-4 py-2 rounded-xl shadow hover:bg-yellow-600 edit-btn">
+              Edit
+            </button>
 
-          <button 
-            onclick="deleteUser('${u.id}')"
-            class="bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700">
-            Delete
-          </button>
-        </td>
-      </tr>
-    `;
+            <button 
+              class="bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700 delete-btn">
+              Delete
+            </button>
+
+            <button 
+              class="bg-purple-600 text-white px-4 py-2 rounded-xl shadow hover:bg-purple-700 block-btn">
+              ${u.block ? "Unblock" : "Block"}
+            </button>
+          </td>
+        `;
+
+        // Add event listeners with proper data binding
+        row.querySelector('.edit-btn').addEventListener('click', () => {
+          editUser(u.ID, u.firstname, u.lastname, u.email, u.phone);
+        });
+
+        row.querySelector('.delete-btn').addEventListener('click', () => {
+          deleteUser(u.ID);
+        });
+
+        row.querySelector('.block-btn').addEventListener('click', () => {
+          toggleBlock(u.ID, u.block);
+        });
+
+        table.appendChild(row);
       });
     }
 
-
-    // ===============================
-    // 🔥 CREATE / UPDATE USER
-    // ===============================
+    // =============================
+    // ✨ CREATE / UPDATE USER
+    // =============================
     document.getElementById("userForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const id = document.getElementById("userId").value;
+      console.log("User ID:", id);
 
       const payload = {
-        name: document.getElementById("name").value,
+        firstname: document.getElementById("firstname").value,
+        lastname: document.getElementById("lastname").value,
         email: document.getElementById("email").value,
         phone: document.getElementById("phone").value,
         password: document.getElementById("password").value
       };
 
-      if (id) {
-        // UPDATE USER
-        await fetch(`${API}/admin/user/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        // CREATE USER
-        await fetch(`${API}/admin/user`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      }
+      try {
+        if (id) {
+          const response = await fetch(`/Admin/UpdateUsers/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
 
-      toggleUserForm();
-      loadUsers();
+          if (!response.ok) {
+            const error = await response.json();
+            console.error("Update failed:", error);
+            alert("Failed to update user: " + (error.Error || "Unknown error"));
+            return;
+          }
+
+          alert("User updated successfully!");
+        } else {
+          const response = await fetch(`/Admin/AddUser`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            console.error("Create failed:", error);
+            alert("Failed to create user: " + (error.Error || "Unknown error"));
+            return;
+          }
+
+          alert("User created successfully!");
+        }
+
+        toggleUserForm();
+        loadUsers();
+      } catch (error) {
+        console.error("Request failed:", error);
+        alert("Request failed: " + error.message);
+      }
     });
 
+    // =============================
+    // ✏️ EDIT USER
+    // =============================
+    function editUser(id, firstnameVal, lastnameVal, emailVal, phoneVal) {
+      console.log("Editing user with ID:", id);
 
-    // ===============================
-    // 🔥 EDIT (prefill form)
-    // ===============================
+      // Show form
+      document.getElementById("userForm").classList.remove("hidden");
 
-    function editUser(id, nameVal, emailVal, phoneVal) {
-      toggleUserForm();
-
+      // Populate form fields
       document.getElementById("userId").value = id;
-      document.getElementById("name").value = nameVal;
+      document.getElementById("firstname").value = firstnameVal;
+      document.getElementById("lastname").value = lastnameVal;
       document.getElementById("email").value = emailVal;
       document.getElementById("phone").value = phoneVal;
+      document.getElementById("password").value = ""; // Clear password field
     }
 
-
-    // ===============================
-    // 🔥 DELETE USER
-    // ===============================
+    // =============================
+    // 🗑 DELETE USER
+    // =============================
     async function deleteUser(id) {
-      await fetch(`${API}/admin/user/${id}`, {
-        method: "DELETE"
-      });
+      if (!confirm("Are you sure you want to delete this user?")) {
+        return;
+      }
 
-      loadUsers();
+      try {
+        const response = await fetch(`/Admin/Delete/${id}`, {
+          method: "DELETE"
+        });
+
+        if (!response.ok) {
+          alert("Failed to delete user");
+          return;
+        }
+
+        alert("User deleted successfully!");
+        loadUsers();
+      } catch (error) {
+        console.error("Delete failed:", error);
+        alert("Delete failed: " + error.message);
+      }
     }
 
+    // =============================
+    // 🚫 BLOCK / UNBLOCK USER
+    // =============================
+    async function toggleBlock(id, currentStatus) {
+      try {
+        const response = await fetch(`/Admin/User/Block/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ block: !currentStatus })
+        });
 
-    // ===============================
-    // 🔥 TOGGLE FORM + RESET
-    // ===============================
+        if (!response.ok) {
+          alert("Failed to update block status");
+          return;
+        }
+
+        alert(`User ${!currentStatus ? 'blocked' : 'unblocked'} successfully!`);
+        loadUsers();
+      } catch (error) {
+        console.error("Block toggle failed:", error);
+        alert("Operation failed: " + error.message);
+      }
+    }
+
+    // =============================
+    // 🎛 TOGGLE FORM
+    // =============================
     function toggleUserForm() {
-      document.getElementById("userForm").classList.toggle("hidden");
-      resetUserForm();
+      const form = document.getElementById("userForm");
+      if (form.classList.contains("hidden")) {
+        form.classList.remove("hidden");
+      } else {
+        form.classList.add("hidden");
+        resetUserForm();
+      }
     }
 
     function resetUserForm() {
@@ -182,10 +262,7 @@
       document.getElementById("userId").value = "";
     }
 
-
-    // ===============================
-    // 🔥 ON LOAD
-    // ===============================
+    // 🚀 INITIAL LOAD
     loadUsers();
   </script>
 
